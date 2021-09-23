@@ -18,6 +18,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socket(server);
 
+app.use(express.json());
 app.use(express.static("../web/build"));
 
 app.get("/ngrok", async (req, res) => {

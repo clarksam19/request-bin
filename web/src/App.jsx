@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { io } from "socket.io-client";
+import "./index.css";
 
 import { getRequests, getUrl } from "./services/requestService";
 
@@ -36,15 +37,33 @@ function App() {
     <div>
       <h1>Request Bin</h1>
       <button onClick={() => handleClick()}>Get URL</button>
-      <input type="text" placeholder="Request Bin URL" value={url} />
+      <input
+        type="text"
+        placeholder="Request Bin URL"
+        value={url}
+        readOnly={true}
+      />
       <div>
         {requests.map((req, idx) => {
           req = JSON.parse(req);
           return (
             <ul>
               <li>{`Request ${idx + 1}`}</li>
+              <li>Headers</li>
               {Object.entries(req.headers).map((entry) => {
                 return <li>{`${entry[0]}: ${entry[1]}`}</li>;
+              })}
+              <li>Body</li>
+              {Object.entries(req.body).map((entry) => {
+                return (
+                  <li>
+                    <pre>{`${entry[0]}: ${JSON.stringify(
+                      entry[1],
+                      null,
+                      2
+                    )}`}</pre>
+                  </li>
+                );
               })}
             </ul>
           );

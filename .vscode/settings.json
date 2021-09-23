@@ -6,5 +6,6 @@
   },
   "eslint.workingDirectories": [{ "mode": "auto" }],
   "files.associations": { "*.jsx": "javascriptreact" },
-  "javascript.suggest.autoImports": false
+  "javascript.suggest.autoImports": false,
+  "css.lint.unknownAtRules": "ignore"
 }
