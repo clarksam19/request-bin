@@ -1,7 +1,6 @@
 const express = require("express");
 const http = require("http");
 const socket = require("socket.io");
-const db = require("./db/queries");
 const ngrok = require("ngrok");
 const config = require("./utils/config");
 
@@ -25,7 +24,19 @@ app.get("/ngrok", async (req, res) => {
   const url = await ngrok.connect(config.PORT);
   res.send(url);
 });
-app.get("/api", db.getRequests);
+app.get("/api", (req, res) => {
+  pool.query(
+    "SELECT * FROM requests WHERE url = $1",
+    [req.query.url],
+    (err, results) => {
+      if (err) {
+        throw err;
+      }
+
+      res.status(200).json(results.rows);
+    }
+  );
+});
 app.post("/", (req, res) => {
   const url = req.headers.host;
   const headers = JSON.stringify(req.headers);
