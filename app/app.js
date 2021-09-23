@@ -3,17 +3,16 @@ const http = require("http");
 const socket = require("socket.io");
 const db = require("./db/queries");
 const ngrok = require("ngrok");
-const PORT = 3000;
+const config = require("./utils/config");
 
 const Pool = require("pg").Pool;
-const DB_PORT = 5432;
 
 const pool = new Pool({
-  user: "postgres",
-  host: "localhost",
-  database: "request_bin",
-  password: "motdepasse",
-  port: DB_PORT,
+  user: config.PG_USER,
+  host: config.PG_HOST,
+  database: config.PG_DB,
+  password: config.PG_PASS,
+  port: config.PG_PORT,
 });
 
 const app = express();
@@ -23,7 +22,7 @@ const io = socket(server);
 app.use(express.static("../web/build"));
 
 app.get("/ngrok", async (req, res) => {
-  const url = await ngrok.connect(PORT);
+  const url = await ngrok.connect(config.PORT);
   res.send(url);
 });
 app.get("/api", db.getRequests);
@@ -48,6 +47,6 @@ io.on("connection", () => {
   io.emit("ping", "pong");
 });
 
-server.listen(PORT, () => {
-  console.log(`listening on port ${PORT}...`);
+server.listen(config.PORT, () => {
+  console.log(`listening on port ${config.PORT}...`);
 });
