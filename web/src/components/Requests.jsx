@@ -1,5 +1,6 @@
 const Requests = ({ requests }) => {
-  return <p>{requests}</p>;
+  console.log(requests);
+  return <div>{requests}</div>;
 };
 
 export default Requests;

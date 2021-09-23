@@ -1,13 +1,14 @@
-import Requests from "./components/Requests";
 import { useState, useEffect } from "react";
 import { io } from "socket.io-client";
 
-import getRequests from "./services/requestService";
+import { getRequests, getUrl } from "./services/requestService";
 
 function App() {
-  const [requests, setRequests] = useState("");
+  const [requests, setRequests] = useState([]);
+  const [url, setUrl] = useState("");
+
   useEffect(() => {
-    setRequests("");
+    setRequests([]);
   }, []);
 
   const socket = io();
@@ -16,22 +17,39 @@ function App() {
     console.log("connected:", socket.id);
   });
 
-  socket.on("ping", (arg) => {
-    console.log(arg);
-  });
-
   socket.on("update", async (url) => {
     const newRequests = await getRequests(url);
-    setRequests(JSON.stringify(newRequests));
+    const result = newRequests.map((req) => JSON.stringify(req));
+    setRequests(result);
   });
 
   socket.on("disconnect", () => {
     console.log("disconnected:", socket.id);
   });
+
+  const handleClick = async () => {
+    const newUrl = await getUrl();
+    setUrl(newUrl);
+  };
+
   return (
     <div>
       <h1>Request Bin</h1>
-      <Requests requests={requests} />
+      <button onClick={() => handleClick()}>Get URL</button>
+      <input type="text" placeholder="Request Bin URL" value={url} />
+      <div>
+        {requests.map((req, idx) => {
+          req = JSON.parse(req);
+          return (
+            <ul>
+              <li>{`Request ${idx + 1}`}</li>
+              {Object.entries(req.headers).map((entry) => {
+                return <li>{`${entry[0]}: ${entry[1]}`}</li>;
+              })}
+            </ul>
+          );
+        })}
+      </div>
     </div>
   );
 }
