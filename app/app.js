@@ -2,6 +2,7 @@ const express = require("express");
 const http = require("http");
 const socket = require("socket.io");
 const db = require("./db/queries");
+const ngrok = require("ngrok");
 const PORT = 3000;
 
 const Pool = require("pg").Pool;
@@ -21,6 +22,10 @@ const io = socket(server);
 
 app.use(express.static("../web/build"));
 
+app.get("/ngrok", async (req, res) => {
+  const url = await ngrok.connect(PORT);
+  res.send(url);
+});
 app.get("/api", db.getRequests);
 app.post("/", (req, res) => {
   const url = req.headers.host;
@@ -40,7 +45,6 @@ app.post("/", (req, res) => {
 });
 
 io.on("connection", () => {
-  console.log("connected");
   io.emit("ping", "pong");
 });
 

@@ -17,7 +17,7 @@ const getRequests = (req, res) => {
       if (err) {
         throw err;
       }
-      console.log(req.query.url);
+
       res.status(200).json(results.rows);
     }
   );
