@@ -35,14 +35,21 @@ function App() {
 
   return (
     <div>
-      <h1>Request Bin</h1>
-      <button onClick={() => handleClick()}>Get URL</button>
-      <input
-        type="text"
-        placeholder="Request Bin URL"
-        value={url}
-        readOnly={true}
-      />
+      <h1 class="text-center text-5xl font-bold">Request Bin</h1>
+      <div class="grid grid-cols-3 gap-2 ">
+        <button
+          class="border-solid border-4 bg-blue-100"
+          onClick={() => handleClick()}
+        >
+          Get URL
+        </button>
+        <input
+          type="text"
+          placeholder="Request Bin URL"
+          value={url}
+          readOnly={true}
+        />
+      </div>
       <div>
         {requests.map((req, idx) => {
           req = JSON.parse(req);
