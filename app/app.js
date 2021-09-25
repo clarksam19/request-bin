@@ -3,7 +3,7 @@ const http = require("http");
 const socket = require("socket.io");
 const ngrok = require("ngrok");
 const config = require("./utils/config");
-
+let url;
 const Pool = require("pg").Pool;
 
 const pool = new Pool({
@@ -22,8 +22,18 @@ app.use(express.json());
 app.use(express.static("../web/build"));
 
 app.get("/ngrok", async (req, res) => {
-  const url = await ngrok.connect(config.PORT);
-  res.send(url);
+  if (!url) {
+    try {
+      url = await ngrok.connect(config.PORT);
+      res.send(url);
+    } catch (err) {
+      console.log(err.body);
+    }
+  } else {
+    await ngrok.disconnect();
+    url = "";
+    res.redirect("/ngrok");
+  }
 });
 app.get("/api", (req, res) => {
   pool.query(
@@ -52,7 +62,7 @@ app.post("/", (req, res) => {
       res.status(200).json(url);
       io.emit("update", url);
     })
-    .catch((err) => console.log(err.stack));
+    .catch((err) => console.log(err));
 });
 
 server.listen(config.PORT, () => {
